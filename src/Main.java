@@ -8,12 +8,21 @@ public class Main {
         System.out.println(position);
 
 
+        //tester modification de point
         Carte carte = new Carte();
-        Position posAlea = carte.genererPositionAlea();
-        System.out.println(posAlea);
-        posAlea.setX(2000);
-        carte.ajusterPosition(posAlea);
-        System.out.print(posAlea);
+//        Position posAlea = carte.genererPositionAlea();
+//        System.out.println(posAlea);
+//        posAlea.setX(2000);
+//        carte.ajusterPosition(posAlea);
+//        System.out.println(posAlea);
+
+        //tester ajustement position
+        ObjetMobile objetMobile = new ObjetMobile(new Position(0,0),10, 2);
+        System.out.println(objetMobile);
+
+        objetMobile.seDeplacer(40,2);
+        System.out.println(objetMobile.getPosition());
+
 
 
     }
