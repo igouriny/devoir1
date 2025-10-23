@@ -5,30 +5,37 @@ import java.util.Random;
 public class ObjetMobile extends ObjetPhysique {
 
     private double direction = 0; //en radians
-    private int vitesse;
+    private double vitesse;
     private double deviationStandard;
 //    Carte carte = new Carte();
 
     private static Random random = new Random();
 
-    public ObjetMobile(Position position, int vitesse, double deviationStandard) {
+    public ObjetMobile(Position position, double vitesse, double deviationStandard) {
         super(position);
         this.vitesse = vitesse;
         this.deviationStandard = deviationStandard;
     }
 
-    public void seDeplacer(double direction, double deviationStandard){
+    public void seDeplacer() {
 
+        // variation de direction aléatoire
         double gaussienne = random.nextGaussian();
-        direction = direction + gaussienne * deviationStandard;
-        double positionX = getPosition().getX() + vitesse * Math.cos(direction);
-        double positionY = getPosition().getY() + vitesse * Math.sin(direction);
+        direction += gaussienne * deviationStandard;
 
-        Position position = new Position(positionX,positionY);
-        getPosition().setX(positionX);
-        getPosition().setY(positionY);
+        // calcul du déplacement
+        double dx = vitesse * Math.cos(direction);
+        double dy = vitesse * Math.sin(direction);
 
-        Carte.ajusterPosition(position);
+        // mise à jour de la position
+        double nouvelleX = getPosition().getX() + dx;
+        double nouvelleY = getPosition().getY() + dy;
+
+        getPosition().setX(nouvelleX);
+        getPosition().setY(nouvelleY);
+
+        // carte toroïdale : on ajuste si on sort des bornes
+        Carte.ajusterPosition(getPosition());
     }
 
     @Override
