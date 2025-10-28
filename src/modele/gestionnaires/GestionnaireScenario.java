@@ -1,11 +1,11 @@
 package modele.gestionnaires;
 
 /**
- * Le gestionnaire de scnario est un module utilitaire grant:
- * 	* la cration de numro de tlphone
+ * Le gestionnaire de sc�nario est un module utilitaire g�rant:
+ * 	* la cr�ation de num�ro de t�l�phone
  *  * les messages
  *
- *  Les fonctionnalits sont offertes pour les numros normales et les numros
+ *  Les fonctionnalit�s sont offertes pour les num�ros normales et les num�ros
  *  de criminels.
  *
  *  @author Fred Simard | ETS
@@ -17,9 +17,8 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
-
 import modele.reseau.Reseau;
-import modele.tda.FileSChainee;
+import modele.tda.ListeStatique;
 
 public class GestionnaireScenario {
 
@@ -27,7 +26,12 @@ public class GestionnaireScenario {
     public static final String PREFIX = "514-";
 
     Reseau reseau = Reseau.getInstance();
-    FileSChainee<String> file = new FileSChainee<String>();
+
+    // (capacité large pour charger le fichier de conversations)
+    private static final int CAPACITE_CONVERSATIONS = 10_000;
+    ListeStatique<String> conversations = new ListeStatique<>(CAPACITE_CONVERSATIONS);
+    private int idxLecture = 0;
+
     ArrayList<String> numeroCriminel = new ArrayList<String>(Reseau.NB_CRIMINELS);
     ArrayList<String> numeroStandard = new ArrayList<String>(Reseau.NB_CELLULAIRES);
 
@@ -41,14 +45,16 @@ public class GestionnaireScenario {
     }
 
     /**
-     * mthode qui charge le fichier de conversation
+     * m�thode qui charge le fichier de conversation
      */
     private void chargementDuFichier() {
 
         try {
             Scanner scanner = new Scanner(new File(FICHIER_CONVERSATION));
             while (scanner.hasNextLine()) {
-                file.enfiler(scanner.nextLine());
+                if (!conversations.estPleine()) {
+                    conversations.ajouter(scanner.nextLine());
+                }
             }
             scanner.close();
         } catch (FileNotFoundException e) {
@@ -57,11 +63,11 @@ public class GestionnaireScenario {
     }
 
     /**
-     * Mthode utilitaire pour gnrer une chane de caractres alatoire
-     * @return String alatoire
+     * M�thode utilitaire pour g�n�rer une cha�ne de caract�res al�atoire
+     * @return String al�atoire
      * @ref: https://www.baeldung.com/java-random-string
      */
-    private static String generatingRandomAlphabeticString() {
+    private static String generatingStringAlphaAlea() {
         int leftLimit = 97; // letter 'a'
         int rightLimit = 122; // letter 'z'
         int targetStringLength = instance.rand.nextInt(100)+1;
@@ -74,34 +80,44 @@ public class GestionnaireScenario {
         return generatedString;
     }
 
+    // ⬇️ remplace l'ancien file.defiler() par une méthode privée équivalente
+    // Lève une IllegalStateException quand il n'y a plus de messages (pour que ton try/catch existant reste valide)
+    private String defilerConversation() {
+        if (idxLecture < conversations.getTaille()) {
+            return conversations.get(idxLecture++);
+        }
+        throw new IllegalStateException("Plus de messages dans le scénario");
+    }
+
     /**
-     * Mthode retournant un message. Le message renvoy dpend de
-     * si le numro est standard ou criminel. Si criminel, le message est tir
-     * du scnario. Si standard, chaine de caractre alatoire
-     * @param numero utilis pour envoyer le message
-     * @return le message  envoyer
+     * M�thode retournant un message. Le message renvoy� d�pend de
+     * si le num�ro est standard ou criminel. Si criminel, le message est tir�
+     * du sc�nario. Si standard, chaine de caract�re al�atoire
+     * @param numero utilis� pour envoyer le message
+     * @return le message � envoyer
      */
     public static String obtenirMessage(String numero) {
 
         if(instance.numeroCriminel.contains(numero)) {
             try {
-                return instance.file.defiler();
+                // ⬇️ anciennement: return instance.file.defiler();
+                return instance.defilerConversation();
             }
             catch(Exception exception){
                 instance.reseau.finDeSimulation();
                 return null;
             }
         } else {
-            return generatingRandomAlphabeticString();
+            return generatingStringAlphaAlea();
         }
     }
 
     /**
-     * Mthode qui retourne un numro choisi alatoirement parmis la
-     * liste des numros criminels,  l'exception de celui reu en
-     * paramtre
-     * @param exclus le numro a exclure des possibilits
-     * @return le numro appartenant aux numros criminels
+     * M�thode qui retourne un num�ro choisi al�atoirement parmis la
+     * liste des num�ros criminels, � l'exception de celui re�u en
+     * param�tre
+     * @param exclus le num�ro a exclure des possibilit�s
+     * @return le num�ro appartenant aux num�ros criminels
      */
     public static String obtenirNumeroCriminelAlea(String exclus) {
         int index = instance.rand.nextInt(instance.numeroCriminel.size());
@@ -115,11 +131,11 @@ public class GestionnaireScenario {
     }
 
     /**
-     * Mthode qui retourne un numro choisi alatoirement parmis la
-     * liste des numros standard,  l'exception de celui reu en
-     * paramtre
-     * @param exclus le numro a exclure des possibilits
-     * @return le numro appartenant aux numros standards
+     * M�thode qui retourne un num�ro choisi al�atoirement parmis la
+     * liste des num�ros standard, � l'exception de celui re�u en
+     * param�tre
+     * @param exclus le num�ro a exclure des possibilit�s
+     * @return le num�ro appartenant aux num�ros standards
      */
     public static String obtenirNumeroStandardAlea(String exclus) {
         int index = instance.rand.nextInt(instance.numeroStandard.size());
@@ -133,9 +149,9 @@ public class GestionnaireScenario {
     }
 
     /**
-     * Mthode qui retourne un numro de tlphone alatoire
-     * aprs l'avoir ajout  la liste des numros criminels
-     * @return le numro sous forme the String
+     * M�thode qui retourne un num�ro de t�l�phone al�atoire
+     * apr�s l'avoir ajout� � la liste des num�ros criminels
+     * @return le num�ro sous forme the String
      */
     public static String obtenirNouveauNumeroCriminel() {
         String numero = obtenirNouveauNumeroAlea();
@@ -144,9 +160,9 @@ public class GestionnaireScenario {
     }
 
     /**
-     * Mthode qui retourne un numro de tlphone alatoire
-     * aprs l'avoir ajout  la liste des numros standards
-     * @return le numro sous forme the String
+     * M�thode qui retourne un num�ro de t�l�phone al�atoire
+     * apr�s l'avoir ajout� � la liste des num�ros standards
+     * @return le num�ro sous forme the String
      */
     public static String obtenirNouveauNumeroStandard() {
         String numero = obtenirNouveauNumeroAlea();
@@ -155,9 +171,9 @@ public class GestionnaireScenario {
     }
 
     /**
-     * Mthode qui construit un numro de tlphone alatoire
-     * avec un prfix constant, tel que PPP-XXX-YYYY
-     * @return le numro sous forme the String
+     * M�thode qui construit un num�ro de t�l�phone al�atoire
+     * avec un pr�fix constant, tel que PPP-XXX-YYYY
+     * @return le num�ro sous forme the String
      */
     private static String obtenirNouveauNumeroAlea() {
 

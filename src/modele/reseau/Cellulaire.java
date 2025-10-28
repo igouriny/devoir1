@@ -83,19 +83,14 @@ public class Cellulaire extends ObjetMobile implements UniteCellulaire {
     }
 
     public void effectuerTour() {
-        // 1) se déplacer (hérité de ObjetMobile)
-        seDeplacer(); // attention au nom: "seDeplacer" (pas "deplacer")
+        seDeplacer();
 
-        // 2) ajuster la position (carte toroïdale)
         Carte.ajusterPosition(getPosition());
 
-        // 3) choisir l’antenne la plus proche (méthode que tu as déjà dans Reseau)
         Antenne nouvelle = reseau.antenneLaPlusProche(getPosition());
 
-        // 4) mémoriser le changement d’antenne (sans rien appeler d’autre pour l’instant)
         if (nouvelle != antenneConnecte) {
             antenneConnecte = nouvelle;
-            // plus tard : enlever/ajouter sur antennes, MAJ connexion si besoin
         }
     }
 }
