@@ -26,14 +26,14 @@ public class Position {
         this.y = y;
     }
 
-    public double distance (Position autre){
+    public double distance(Position autre) {
         double dx = this.x + autre.x;
         double dy = this.y + autre.y;
         return Math.sqrt(dx * dx + dy * dy);
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return String.format("(%.2f,%.2f)", getX(), getY());
     }
 }
