@@ -2,38 +2,30 @@ package modele.physique;
 
 import java.util.Random;
 
-public class ObjetMobile extends ObjetPhysique {
+public class ObjetMobile extends ObjetPhysique{
 
-    private double direction = 0; //en radians
-    private int vitesse;
-    private double deviationStandard;
-//    Carte carte = new Carte();
+    private double direction = 0.0;
+    private double vitesse;
+    private double deviation;
+    private static final Random RANDOM = new Random();
 
-    private static Random random = new Random();
 
-    public ObjetMobile(Position position, int vitesse, double deviationStandard) {
+    public ObjetMobile(Position position, double vitesse, double deviation) {
         super(position);
         this.vitesse = vitesse;
-        this.deviationStandard = deviationStandard;
+        this.deviation = deviation;
     }
 
-    public void seDeplacer(double direction, double deviationStandard){
+    public void seDeplacer() {
+        direction += RANDOM.nextGaussian() * deviation;
 
-        double gaussienne = random.nextGaussian();
-        direction = direction + gaussienne * deviationStandard;
-        double positionX = getPosition().getX() + vitesse * Math.cos(direction);
-        double positionY = getPosition().getY() + vitesse * Math.sin(direction);
+        double x = getPosition().getPositionX() + vitesse * Math.cos(direction);
+        double y = getPosition().getPositionY() + vitesse * Math.sin(direction);
 
-        Position position = new Position(positionX,positionY);
-        getPosition().setX(positionX);
-        getPosition().setY(positionY);
+        getPosition().setPositionX(x);
+        getPosition().setPositionY(y);
 
-        Carte.ajusterPosition(position);
-    }
-
-    @Override
-    public String toString(){
-        return String.format("(%.2f,%.2f)", getPosition().getX(), getPosition().getY());
+        Carte.ajustementPosition(getPosition());
     }
 
 

@@ -1,37 +1,46 @@
 package modele.physique;
-import modele.physique.*;
 
 import java.util.Random;
 
-import static java.lang.Math.abs;
-
 public class Carte {
 
-    private static final Position TAILLE = new Position(1920,1080);
-    private static final Random rand = new Random();
+    public static final Position TAILLE = new Position(1920, 1080);
+    public static final Random RANDOM = new Random();
 
-    public static Position genererPositionAlea(){
-        double randX = rand.nextDouble();
-        double randY = rand.nextDouble();
-
-        return new Position(randX, randY);
+    // Retourne une position aléatoire dans les limites de la carte
+    public static Position randomPosition(){
+        double x = RANDOM.nextDouble() * TAILLE.getPositionX();
+        double y = RANDOM.nextDouble() * TAILLE.getPositionY();
+        return new Position(x, y);
     }
 
-    public static Position ajusterPosition(Position position){
-        if (position.getX() > 1920){
-            position.setX((position.getX() + 1920) % 1920);
-        } else {
-            position.getX();
-        }
-        if (position.getY() > 1080){
-            position.setY((position.getY() + 1080) % 1080);
+    public static void ajustementPosition(Position position){
+        double x = position.getPositionX();
+        double y = position.getPositionY();
 
-        } else {
-            position.getY();
-        }
+        if(x < 0) x += TAILLE.getPositionX();
+        if(x > TAILLE.getPositionX()) x -= TAILLE.getPositionX();
 
-        return position;
+        if (y < 0) y += TAILLE.getPositionY();
+        if (y >= TAILLE.getPositionY()) y -= TAILLE.getPositionY();
+
+        position.setPositionX(x);
+        position.setPositionY(y);
     }
+
+    // Test
+    public static void main(String[] args) {
+        Position position = randomPosition();
+        System.out.println("Un point random: " + position);
+
+        position.setPositionX(position.getPositionX() + TAILLE.getPositionX());
+        position.setPositionY(position.getPositionY() + TAILLE.getPositionY());
+        System.out.println("Point en dehors de la carte: " + position);
+
+        ajustementPosition(position);
+        System.out.println("Point après ajustement: " + position);
+    }
+
 
 
 }

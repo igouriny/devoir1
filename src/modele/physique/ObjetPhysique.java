@@ -1,6 +1,6 @@
 package modele.physique;
 
-public abstract class ObjetPhysique {
+public class ObjetPhysique {
 
     private Position position;
 
@@ -8,8 +8,7 @@ public abstract class ObjetPhysique {
         this.position = position;
     }
 
-    public Position getPosition(){
+    public Position getPosition() {
         return position;
     }
-
 }

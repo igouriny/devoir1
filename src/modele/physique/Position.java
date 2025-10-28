@@ -2,38 +2,45 @@ package modele.physique;
 
 public class Position {
 
-    private double x;
-    private double y;
+    private double positionX;
+    private double positionY;
 
-    public Position(double x, double y) {
-        this.x = x;
-        this.y = y;
+    public double getPositionX() {
+        return positionX;
     }
 
-    public double getX() {
-        return x;
+    public double getPositionY() {
+        return positionY;
     }
 
-    public void setX(double x) {
-        this.x = x;
+    public void setPositionX(double positionX) {
+        this.positionX = positionX;
     }
 
-    public double getY() {
-        return y;
+    public void setPositionY(double positionY) {
+        this.positionY = positionY;
     }
 
-    public void setY(double y) {
-        this.y = y;
+    public Position(double positionX, double positionY) {
+        this.positionX = positionX;
+        this.positionY = positionY;
     }
 
-    public double distance (Position autre){
-        double dx = this.x + autre.x;
-        double dy = this.y + autre.y;
+    public double distanceEntre(Position other) {
+        double dx = this.positionX - other.positionX;
+        double dy = this.positionY - other.positionY;
         return Math.sqrt(dx * dx + dy * dy);
     }
 
     @Override
-    public String toString(){
-        return String.format("(%.2f,%.2f)", getX(), getY());
+    public String toString() {
+        return "Position { x=" + positionX + ", y=" + positionY + " }";
     }
+
+    // Test
+    public static void main(String[] args) {
+        Position p = new Position(3.0, 4.0);
+        System.out.println(p);
+    }
+
 }
