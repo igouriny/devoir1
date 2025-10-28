@@ -1,37 +1,27 @@
 package modele.physique;
-import modele.physique.*;
 
 import java.util.Random;
 
-import static java.lang.Math.abs;
+public final class Carte {
+    public static final double LARGEUR = 1920.0;
+    public static final double HAUTEUR = 1080.0;
 
-public class Carte {
+    private static final Random R = new Random();
 
-    private static final Position TAILLE = new Position(1920,1080);
-    private static final Random rand = new Random();
+    private Carte() {}
 
-    public static Position genererPositionAlea(){
-        double randX = rand.nextDouble();
-        double randY = rand.nextDouble();
-
-        return new Position(randX, randY);
+    public static Position genererPositionAlea() {
+        return new Position(R.nextDouble() * LARGEUR, R.nextDouble() * HAUTEUR);
     }
 
-    public static Position ajusterPosition(Position position){
-        if (position.getX() > 1920){
-            position.setX((position.getX() + 1920) % 1920);
-        } else {
-            position.getX();
-        }
-        if (position.getY() > 1080){
-            position.setY((position.getY() + 1080) % 1080);
+    public static void ajusterPosition(Position p) {
+        double x = p.getX();
+        double y = p.getY();
 
-        } else {
-            position.getY();
-        }
+        x = (x % LARGEUR + LARGEUR) % LARGEUR;
+        y = (y % HAUTEUR + HAUTEUR) % HAUTEUR;
 
-        return position;
+        p.setX(x);
+        p.setY(y);
     }
-
-
 }
